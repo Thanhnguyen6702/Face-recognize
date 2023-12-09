@@ -84,20 +84,20 @@ class MainActivity : AppCompatActivity() {
     private val modelInfo = Models.FACENET
 
     // Camera Facing
-    private val cameraFacing = CameraSelector.LENS_FACING_BACK
+    private var cameraFacing = CameraSelector.LENS_FACING_BACK
 
     // <---------------------------------------------------------------->
 
 
-    companion object {
-
-        lateinit var logTextView : TextView
-
-        fun setMessage( message : String ) {
-            logTextView.text = message
-        }
-
-    }
+//    companion object {
+//
+//        lateinit var logTextView : TextView
+//
+//        fun setMessage( message : String ) {
+//            logTextView.text = message
+//        }
+//
+//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -115,8 +115,8 @@ class MainActivity : AppCompatActivity() {
         setContentView( activityMainBinding.root )
 
         previewView = activityMainBinding.previewView
-        logTextView = activityMainBinding.logTextview
-        logTextView.movementMethod = ScrollingMovementMethod()
+//        logTextView = activityMainBinding.logTextview
+//        logTextView.movementMethod = ScrollingMovementMethod()
         // Necessary to keep the Overlay above the PreviewView so that the boxes are visible.
         val boundingBoxOverlay = activityMainBinding.bboxOverlay
         boundingBoxOverlay.cameraFacing = cameraFacing
@@ -127,7 +127,10 @@ class MainActivity : AppCompatActivity() {
         frameAnalyser = FrameAnalyser( this , boundingBoxOverlay , faceNetModel )
         fileReader = FileReader( faceNetModel )
 
-
+        val button = activityMainBinding.swapCam
+        button.setOnClickListener{
+            swapCamera()
+        }
         // We'll only require the CAMERA permission from the user.
         // For scoped storage, particularly for accessing documents, we won't require WRITE_EXTERNAL_STORAGE or
         // READ_EXTERNAL_STORAGE permissions. See https://developer.android.com/training/data-storage
@@ -164,6 +167,28 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
+    private fun swapCamera() {
+        try {
+            // Dừng sử dụng các use cases hiện tại
+            cameraProviderFuture.get().unbindAll()
+
+            // Đổi giữa camera trước và sau
+            cameraFacing = if (cameraFacing == CameraSelector.LENS_FACING_BACK) {
+                CameraSelector.LENS_FACING_FRONT
+            } else {
+                CameraSelector.LENS_FACING_BACK
+            }
+
+            cameraProviderFuture.addListener({
+                val newCameraProvider = cameraProviderFuture.get()
+                bindPreview(newCameraProvider)
+            }, ContextCompat.getMainExecutor(this))
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
 
     // ---------------------------------------------- //
 

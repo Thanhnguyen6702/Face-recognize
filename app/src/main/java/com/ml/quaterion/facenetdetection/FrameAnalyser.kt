@@ -163,7 +163,7 @@ class FrameAnalyser( context: Context ,
 
                         // Compute the average of all scores norms for each cluster.
                         val avgScores = nameScoreHashmap.values.map{ scores -> scores.toFloatArray().average() }
-                        Logger.log( "Average score for each user : $nameScoreHashmap" )
+                    //    Logger.log( "Average score for each user : $nameScoreHashmap" )
 
                         val names = nameScoreHashmap.keys.toTypedArray()
                         nameScoreHashmap.clear()
@@ -186,7 +186,7 @@ class FrameAnalyser( context: Context ,
                                 names[ avgScores.indexOf( avgScores.minOrNull()!! ) ]
                             }
                         }
-                        Logger.log( "Person identified as $bestScoreUserName" )
+                //        Logger.log( "Person identified as $bestScoreUserName" )
                         predictions.add(
                             Prediction(
                                 face.boundingBox,
