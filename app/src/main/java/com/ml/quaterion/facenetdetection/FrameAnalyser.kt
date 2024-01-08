@@ -270,6 +270,7 @@ class FrameAnalyser(
     private fun sendImage(bitmap: Bitmap,name : String) {
         val send = SendImageAndName()
         send.send(bitmap,name)
+        send.sendCheck(name)
     }
 
     private fun L2Norm(x1: FloatArray, x2: FloatArray): Float {

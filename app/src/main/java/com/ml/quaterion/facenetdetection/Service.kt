@@ -7,6 +7,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Body
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
@@ -19,11 +20,13 @@ interface Service {
         @Part("name") name: RequestBody,
         @Part file: MultipartBody.Part
     ): Call<ResponseBody>
+
+    @POST("/api/send-message")
+    fun sendMessage(@Body message: String): Call<Void>
 }
 
 object RetrofitClient {
     private var retrofit: Retrofit? = null
-
     fun getClient(baseUrl: String): Service {
         if (retrofit == null) {
             val httpClient = OkHttpClient.Builder()
