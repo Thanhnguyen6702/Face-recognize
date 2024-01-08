@@ -34,19 +34,30 @@ class BitmapUtils {
     companion object {
 
         // Crop the given bitmap with the given rect.
-        fun cropRectFromBitmap(source: Bitmap, rect: Rect ): Bitmap {
+
+        fun cropRectFromBitmap(source: Bitmap, rect: Rect): Bitmap {
+            var left = rect.left
+            var top = rect.top
             var width = rect.width()
             var height = rect.height()
-            if ( (rect.left + width) > source.width ){
-                width = source.width - rect.left
+
+            // Kiểm tra xem giới hạn left và top có âm không
+            if (left < 0) {
+                width += left  // Giảm width bằng giá trị âm của left để đảm bảo left >= 0
+                left = 0
             }
-            if ( (rect.top + height ) > source.height ){
-                height = source.height - rect.top
+
+            if (top < 0) {
+                height += top  // Giảm height bằng giá trị âm của top để đảm bảo top >= 0
+                top = 0
             }
-            val croppedBitmap = Bitmap.createBitmap( source , rect.left , rect.top , width , height )
-            // Uncomment the below line if you want to save the input image.
-            // BitmapUtils.saveBitmap( context , croppedBitmap , "source" )
-            return croppedBitmap
+
+            // Kiểm tra giới hạn right và bottom
+            val right = minOf(left + width, source.width)
+            val bottom = minOf(top + height, source.height)
+
+            // Tạo một Bitmap mới với các giá trị đã kiểm tra
+            return Bitmap.createBitmap(source, left, top, right - left, bottom - top)
         }
 
 
